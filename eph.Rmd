@@ -2,7 +2,7 @@
 title: "Analizando Salarios de la EPH con R"
 output:
   html_document:
-    keep_md: no
+    keep_md: yes
 ---
 
 ## Introduccion
@@ -360,7 +360,7 @@ ggplot(por_edad, aes(edad_rango, fill=edad_rango)) +
    aes(ymin = salario_whisker_bajo, lower = salario_q1, middle = salario_promedio, upper = salario_q3, ymax = salario_whisker_alto),
    stat = "identity"
    ) +
-  scale_fill_brewer(palette="Set2") +
+  scale_fill_brewer(palette="BuPu") +
   coord_flip() +
   ggtitle('Ingresos de ocupacion principal por edad') +
   xlab('Rango de edad') +
