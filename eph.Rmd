@@ -9,7 +9,12 @@ output:
 
 El [INDEC](https://www.indec.gob.ar) libera cada trimestre la base de datos de la `Encuesta Permanente de Hogares`, o `EPH`, la misma es una encuesta que se hace en hogares de todo el pais y nos permite analizar estadisticamente a la poblacion de nuestro pais. Desafortunadamente las encuestas realizadas entre 2007 y 2015 tienen muchos problemas metodologicos [segun nos indican desde la pagina del INDEC](https://www.indec.gob.ar/ftp/cuadros/sociedad/anexo_informe_eph_23_08_16.pdf), pero tenemos [datos detallados desde 2016-2do trimestre en adelante](https://www.indec.gob.ar/bases-de-datos.asp).
 
-Descargue los datos del tercer trimestre de 2018 (Es decir, Jul-Sep 2018) y arme un script en R para procesar los datos, investigando la fuente de datos vi que habia varios mappings que vienen de PDFs, la base de datos requiere bastante "masajeo" para analizar, cree en base a los PDFs archivos CSV con los codigos de ocupaciones, y los codigos de actividad del mercosur. [Ambos archivos csv estan disponibles en el repositorio de este proyecto: https://github.com/sicarul/eph-salarios](https://github.com/sicarul/eph-salarios).
+Descargue los datos del tercer trimestre de 2018 (Es decir, Jul-Sep 2018):
+
+![Descarga de datos del EPH](eph_indec.png)
+Recordar poner el txt en el mismo directorio de trabajo.
+
+Luego cree un script en R para procesar los datos, investigando la fuente de datos vi que habia varios mappings que vienen de PDFs, la base de datos requiere bastante "masajeo" para analizar, cree en base a los PDFs archivos CSV con los codigos de ocupaciones, y los codigos de actividad del mercosur. [Ambos archivos csv estan disponibles en el repositorio de este proyecto: https://github.com/sicarul/eph-salarios](https://github.com/sicarul/eph-salarios).
 
 Algo importante a tener en cuenta es que el ritmo de la inflacion desde que estos datos fueron capturados hace necesario leer los datos en forma relativa y no absoluta.
 
