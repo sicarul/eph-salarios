@@ -315,7 +315,7 @@ trabajo_incluye_comida, trabajo_incluye_vivienda, trabajo_incluye_mercaderia, tr
   mutate(actividad_empresa=as_factor(actividad_empresa))
 
 
-
+write_delim(individual_transf, "individual_transf.csv", delim = ";")
 
 empleados = filter(individual_transf,
                       estado_actividad == 'Ocupado' &
