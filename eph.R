@@ -10,10 +10,10 @@ caracter_ocupacional_codes=read_csv('caracter_ocupacional.csv')
 
 simple_boolean = function(x) {
   case_when(
-      x==1 ~ TRUE,
-      x==2 ~ FALSE,
-      TRUE ~ NA
-      )
+    x==1 ~ TRUE,
+    x==2 ~ FALSE,
+    TRUE ~ NA
+  )
 }
 
 individual_transf = select(individual,
@@ -86,9 +86,9 @@ individual_transf = select(individual,
                            cantidad_ocupaciones=PP03D,
                            codigo_ocupacion=PP04D_COD,
                            ponderador_ocup_principal=PONDIIO
-                           ) %>%
+) %>%
   mutate_at(vars(queria_mas, busco_otro_trabajo, busco_mas_horas, entrevista, trabajo_12m, trabajo_busco_12m, trabajo_busqueda_contactos, trabajo_busqueda_cv_avisos, trabajo_busqueda_sepresento, trabajo_busqueda_emprendimiento, trabajo_busqueda_carteles, trabajo_busqueda_conocidos, trabajo_busqueda_bolsas_trabajo, trabajo_busqueda_otros, asalariado_temporal,
-trabajo_incluye_comida, trabajo_incluye_vivienda, trabajo_incluye_mercaderia, trabajo_incluye_otros_beneficios, trabajo_incluye_vacaciones_pagas, trabajo_incluye_aguinaldo, trabajo_incluye_dias_enfermedad, trabajo_incluye_obra_social, trabajo_incluye_jubilacion, aporta_independiente_jubilacion), simple_boolean) %>%
+                 trabajo_incluye_comida, trabajo_incluye_vivienda, trabajo_incluye_mercaderia, trabajo_incluye_otros_beneficios, trabajo_incluye_vacaciones_pagas, trabajo_incluye_aguinaldo, trabajo_incluye_dias_enfermedad, trabajo_incluye_obra_social, trabajo_incluye_jubilacion, aporta_independiente_jubilacion), simple_boolean) %>%
   mutate(
     sexo=case_when(
       sexo==1 ~ "hombre",
@@ -105,7 +105,8 @@ trabajo_incluye_comida, trabajo_incluye_vivienda, trabajo_incluye_mercaderia, tr
       tipo_actividad == 1 ~ "Patrón",
       tipo_actividad == 2 ~ "Cuenta propia",
       tipo_actividad == 3 ~ "Obrero o empleado",
-      tipo_actividad == 4 ~ "Trabajador familiar sin remuneración"
+      tipo_actividad == 4 ~ "Trabajador familiar sin remuneración",
+      TRUE ~ "otro"
     )),
     tipo_inactividad=as_factor(case_when(
       tipo_inactividad==1 ~ "Jubilado/ Pensionado",
@@ -122,13 +123,13 @@ trabajo_incluye_comida, trabajo_incluye_vivienda, trabajo_incluye_mercaderia, tr
       intensidad==2 ~ "Ocupado pleno",
       intensidad==3 ~ "Sobreocupado",
       intensidad==4 ~ "Ocupado que no trabajó en la semana",
-      TRUE ~ as.character(NA)
+      TRUE ~ "otro"
     )),
     tipo_empresa=as_factor(case_when(
       tipo_empresa==1 ~ "Estatal",
       tipo_empresa==2 ~ "Privada",
       tipo_empresa==3 ~ "Otra",
-      TRUE ~ as.character(NA)
+      TRUE ~ "otro"
     )),
     nivel_educacion=case_when(
       nivel_educacion==1 ~ "Jardín/Preescolar",
@@ -140,7 +141,7 @@ trabajo_incluye_comida, trabajo_incluye_vivienda, trabajo_incluye_mercaderia, tr
       nivel_educacion==7 ~ "Universitario",
       nivel_educacion==8 ~ "Posgrado Univ.",
       nivel_educacion==9 ~ "Educación especial (discapacitado)",
-      TRUE ~ as.character(NA)
+      TRUE ~ "otro"
     ),
     # Antiguedad de trabajador en relacion de dependencia
     desde_trabaja_anyo = as.numeric(ifelse(desde_trabaja_anyo==99, as.integer(NA),desde_trabaja_anyo)),
@@ -190,7 +191,7 @@ trabajo_incluye_comida, trabajo_incluye_vivienda, trabajo_incluye_mercaderia, tr
     cant_empleados_estimados=ifelse(
       is.na(cant_empleados_max),cant_empleados_min*1.5,
       round((cant_empleados_max+cant_empleados_min)/2)
-      ),
+    ),
     asalariado_antiguedad = case_when(
       asalariado_antiguedad == 1 ~ "menos de 1 mes",
       asalariado_antiguedad == 2 ~ "1 a 3 meses",
@@ -198,7 +199,7 @@ trabajo_incluye_comida, trabajo_incluye_vivienda, trabajo_incluye_mercaderia, tr
       asalariado_antiguedad == 4 ~ "de 6 a 12 meses",
       asalariado_antiguedad == 5 ~ "de 1 a 5 años",
       asalariado_antiguedad == 6 ~ "más de 5 años",
-      TRUE ~ as.character(NA)
+      TRUE ~ "otro"
     ),
     asalariado_temporal_tiempo = case_when(
       asalariado_temporal_tiempo == 1 ~ "solo fue esa vez/sólo cuando lo llaman",
@@ -206,7 +207,7 @@ trabajo_incluye_comida, trabajo_incluye_vivienda, trabajo_incluye_mercaderia, tr
       asalariado_temporal_tiempo == 3  ~ "de 3 a 6 meses",
       asalariado_temporal_tiempo == 4  ~ "de 6 a 12 meses",
       asalariado_temporal_tiempo == 5  ~ "más de 1 año",
-      TRUE  ~ as.character(NA)
+      TRUE ~ "otro"
     ),
     asalariado_tipo = case_when(
       asalariado_tipo == 1 ~ "Plan de empleo",
@@ -217,33 +218,97 @@ trabajo_incluye_comida, trabajo_incluye_vivienda, trabajo_incluye_mercaderia, tr
     trabajo_turno_habitual=case_when(
       trabajo_turno_habitual == 1 ~ "De dia",
       trabajo_turno_habitual == 2  ~ "De noche",
-      trabajo_turno_habitual == 3  ~ "Otro (Guardia, rotativo, etc)"
+      trabajo_turno_habitual == 3  ~ "Otro (Guardia, rotativo, etc)",
+      TRUE ~ "otro"
     ),
     trabajo_forma_pago=case_when(
       trabajo_forma_pago == 1 ~ "Recibo del empleador",
       trabajo_forma_pago == 2  ~ "Papel/Recibo precario",
       trabajo_forma_pago == 3  ~ "Entrega factura",
       trabajo_forma_pago == 4  ~ "Sin papeles",
-      trabajo_forma_pago == 5  ~ "Ad-honorem"
+      trabajo_forma_pago == 5  ~ "Ad-honorem",
+      TRUE ~ "otro"
     ),
     codigo_ocupacion=ifelse(is.na(codigo_ocupacion), '     ', as.character(codigo_ocupacion)),
     ocupacion_jerarquia=as_factor(case_when(
       substring(codigo_ocupacion, 3,3) == '0' ~ "Director",
       substring(codigo_ocupacion, 3,3) == '1' ~ "Cuenta propia",
       substring(codigo_ocupacion, 3,3) == '2' ~ "Jefe",
-      substring(codigo_ocupacion, 3,3) == '3' ~ "Trabajador asalariado"
+      substring(codigo_ocupacion, 3,3) == '3' ~ "Trabajador asalariado",
+      TRUE  ~ "otro"
+      
     )),
     ocupacion_tecnologia=as_factor(case_when(
       substring(codigo_ocupacion, 4,4) == '0' ~ "Sin maquinaria",
       substring(codigo_ocupacion, 4,4) == '1' ~ "Operacion de maquinaria y equipos electromecanicos",
-      substring(codigo_ocupacion, 4,4) == '2' ~ "Operacion de sistemas y equipos informatizados"
+      substring(codigo_ocupacion, 4,4) == '2' ~ "Operacion de sistemas y equipos informatizados",
+      TRUE ~ "otro"
     )),
     ocupacion_calificacion=as_factor(case_when(
       substring(codigo_ocupacion, 5,5) == '0' ~ "Profesionales",
       substring(codigo_ocupacion, 5,5) == '1' ~ "Tecnicos",
       substring(codigo_ocupacion, 5,5) == '2' ~ "Operativos",
-      substring(codigo_ocupacion, 5,5) == '3' ~ "No calificados"
+      substring(codigo_ocupacion, 5,5) == '3' ~ "No calificados",
+      TRUE ~ "otro"
     )),
+    
+    alfabeto=case_when(
+      alfabeto == 1 ~ "Si",
+      alfabeto == 2  ~ "No",
+      alfabeto == 3  ~ "menor 2 años",
+      TRUE  ~ "otro" 
+    ),
+    
+    asistio_escuela=case_when(
+      asistio_escuela == 1 ~ "Si",
+      asistio_escuela == 2  ~ "No (pero asistió)",
+      asistio_escuela == 3  ~ "nunca",
+      TRUE  ~ "otro" 
+    ),
+    
+    finalizo_educacion=case_when(
+      asistio_escuela == 1 ~ "Si",
+      asistio_escuela == 2  ~ "No (pero asistió)",
+      asistio_escuela == 9  ~ "Ns/Nr",
+      TRUE  ~ "otro" 
+    ),
+    
+    sistema_salud=case_when(
+      sistema_salud == 1 ~ "Obra social (incluye PAMI)",
+      sistema_salud == 2  ~ "Mutual / Prepaga / Servicio de emergencia",
+      sistema_salud == 3  ~ "Planes y seguros públicos",
+      sistema_salud == 4  ~ "No paga ni le descuentan",
+      sistema_salud == 9  ~ "Ns./Nr.",
+      sistema_salud == 12  ~ "Obra social y mutual/prepaga/servicio de emergencia.",
+      sistema_salud == 13  ~ "Obra social y Planes y Seguros Públicos",
+      sistema_salud == 23  ~ "Mutual/prepaga/servicio de emergencia/ Planes y Seguros Públicos",
+      sistema_salud == 123  ~ "obra social, mutual/prepaga/servicio de emergencia y Planes y Seguros Públicos",
+      TRUE  ~ "otro" 
+    ),
+    
+    
+    nivel_educativo=case_when(
+      nivel_educativo == 1 ~ "Primaria Incompleta(incluye educación especial)",
+      nivel_educativo == 2  ~ "Primaria Completa",
+      nivel_educativo == 3  ~ "Secundaria Incompleta",
+      nivel_educativo == 4  ~ "Secundaria Completa",
+      nivel_educativo == 5  ~ "Superior Universitaria Incompleta",
+      nivel_educativo == 6  ~ "Superior Universitaria Completa",
+      nivel_educativo == 7  ~ "Sin instrucción",
+      nivel_educativo == 9  ~ "Ns./ Nr.",
+      TRUE  ~ "otro" 
+    ),
+    
+    estado_civil=case_when(
+      estado_civil == 1 ~ "unido",
+      estado_civil == 2  ~ "casado",
+      estado_civil == 3  ~ "separado/a ó divorciado/a",
+      estado_civil == 4  ~ "viudo/a",
+      estado_civil == 5  ~ "soltero/a",
+      TRUE  ~ "otro" 
+    ),
+    
+    
     ocupacion_caracter_codigo=substring(codigo_ocupacion, 1,2),
     aglomerado=as_factor(case_when(
       aglomerado == 02 ~ "Gran La Plata",
@@ -280,7 +345,7 @@ trabajo_incluye_comida, trabajo_incluye_vivienda, trabajo_incluye_mercaderia, tr
       aglomerado == 93 ~ "Viedma – Carmen de Patagones"
     ))
     
-    ) %>%
+  ) %>%
   left_join(select(mercosur_codes, clase_code, seccion, division, clase), by=c("actividad_empresa"="clase_code")) %>%
   left_join(caracter_ocupacional_codes, by=c("ocupacion_caracter_codigo"="caracter_codigo")) %>%
   select(-starts_with('desde_trabaja_'),
@@ -291,205 +356,5 @@ trabajo_incluye_comida, trabajo_incluye_vivienda, trabajo_incluye_mercaderia, tr
 
 
 
-empleados = filter(individual_transf,
-                      estado_actividad == 'Ocupado' &
-                      tipo_actividad == 'Obrero o empleado' &
-                      !is.na(caracter_ocupacional) &
-                      salario>0 &
-                      edad >= 18 &
-                      horas > 0) %>%
-  mutate_at(vars(ocupacion_jerarquia, ocupacion_calificacion, actividad_empresa), fct_explicit_na) %>%
-  mutate(salario_hora=salario / (horas*4.28)) %>%
-  mutate(
-    asalariado_antiguedad = case_when(
-      asalariado_antiguedad %in% c("menos de 1 mes", "1 a 3 meses","de 3 a 6 meses","de 6 a 12 meses") ~ "Menos de 1 año",
-      TRUE ~ asalariado_antiguedad
-    ),
-    nivel_educacion=fct_explicit_na(as_factor(case_when(
-      nivel_educacion %in% c("Primario","EGB") ~ "Primario",
-      nivel_educacion %in% c("Secundario", "Polimodal") ~ "Secundario",
-      TRUE ~ nivel_educacion
-    )))
-  ) %>%
-  mutate(edad_rango=equal_freq(edad, 4))
-
-por_edad = group_by(empleados, edad_rango) %>%
-  summarize(
-    casos=n(),
-    salario_q1=wtd.quantile(salario_hora, weights=ponderador_ocup_principal, probs=c(0.25)),
-    salario_promedio=wtd.quantile(salario_hora, weights=ponderador_ocup_principal, probs=0.5),
-    salario_q3=wtd.quantile(salario_hora, weights=ponderador_ocup_principal, probs=c(0.75)),
-    salario_whisker_bajo=wtd.quantile(salario_hora, weights=ponderador_ocup_principal, probs=c(0.02)),
-    salario_whisker_alto=wtd.quantile(salario_hora, weights=ponderador_ocup_principal, probs=c(0.98))
-    )
-
-ggplot(por_edad, aes(edad_rango, fill=edad_rango)) +
-  geom_boxplot(
-   aes(ymin = salario_whisker_bajo, lower = salario_q1, middle = salario_promedio, upper = salario_q3, ymax = salario_whisker_alto),
-   stat = "identity"
-   ) +
-  scale_fill_brewer(palette="Set2") +
-  coord_flip() +
-  ggtitle('Ingresos de ocupacion principal por edad') +
-  xlab('Rango de edad') +
-  ylab('Salario por hora') +
-  labs(fill = "Rango de edad") +
-  scale_y_continuous(labels=scales::dollar_format())
-  
-
-por_edad_forma_pago = group_by(empleados, edad_rango, trabajo_forma_pago) %>%
-  summarize(
-    casos=n(),
-    salario_q1=wtd.quantile(salario_hora, weights=ponderador_ocup_principal, probs=c(0.25)),
-    salario_promedio=wtd.quantile(salario_hora, weights=ponderador_ocup_principal, probs=0.5),
-    salario_q3=wtd.quantile(salario_hora, weights=ponderador_ocup_principal, probs=c(0.75)),
-    salario_whisker_bajo=wtd.quantile(salario_hora, weights=ponderador_ocup_principal, probs=c(0.02)),
-    salario_whisker_alto=wtd.quantile(salario_hora, weights=ponderador_ocup_principal, probs=c(0.98))
-    ) %>%
-  filter(!is.na(trabajo_forma_pago))
-
-
-
-ggplot(por_edad_forma_pago, aes(trabajo_forma_pago,fill=trabajo_forma_pago)) +
-  geom_boxplot(
-   aes(ymin = salario_whisker_bajo, lower = salario_q1, middle = salario_promedio, upper = salario_q3, ymax = salario_whisker_alto),
-   stat = "identity"
-   ) +
-  scale_fill_brewer(palette="Set2") +
-  coord_flip() +
-  ggtitle('Ingresos de ocupacion principal por edad y formalidad') +
-  xlab('Rango de edad') +
-  ylab('Salario por hora') +
-  labs(fill = "Rango de edad") +
-  scale_y_continuous(labels=scales::dollar_format()) +
-  facet_wrap(~edad_rango)
-
-
-
-por_edad_ocupacion = group_by(empleados, edad_rango, caracter_ocupacional) %>%
-  summarize(
-    casos=n(),
-    salario_q1=wtd.quantile(salario_hora, weights=ponderador_ocup_principal, probs=c(0.25)),
-    salario_promedio=wtd.quantile(salario_hora, weights=ponderador_ocup_principal, probs=0.5),
-    salario_q3=wtd.quantile(salario_hora, weights=ponderador_ocup_principal, probs=c(0.75)),
-    salario_whisker_bajo=wtd.quantile(salario_hora, weights=ponderador_ocup_principal, probs=c(0.02)),
-    salario_whisker_alto=wtd.quantile(salario_hora, weights=ponderador_ocup_principal, probs=c(0.98))
-    ) %>%
-  filter(casos>10)
-
-rowsDel = group_by(por_edad_ocupacion, caracter_ocupacional) %>%
-  count() %>%
-  filter(n == 1)
-
-por_edad_ocupacion_plot = anti_join(por_edad_ocupacion, rowsDel, by='caracter_ocupacional') %>%
-  mutate(caracter_ocupacional=stringr::str_wrap(as.character(caracter_ocupacional), width=40))
-
-for (i in 1:ceiling(length(unique(por_edad_ocupacion_plot$caracter_ocupacional))/4)){
-  
-g=ggplot(por_edad_ocupacion_plot, aes(edad_rango, fill=edad_rango)) +
-  geom_boxplot(
-   aes(ymin = salario_whisker_bajo, lower = salario_q1, middle = salario_promedio, upper = salario_q3, ymax = salario_whisker_alto),
-   stat = "identity"
-   ) +
-  scale_fill_brewer(palette="BuPu") +
-  coord_flip() +
-  xlab('Rango de edad') +
-  ylab('Salario por hora') +
-  labs(fill = "Rango de edad") +
-  scale_y_continuous(labels=scales::dollar_format()) +
-  facet_wrap_paginate(~caracter_ocupacional, scales="free",nrow=2, ncol=2, page=i) +
-  theme_light()
-  
-  plot(g) 
-}
-
-
-por_aglomerado = group_by(empleados, aglomerado) %>%
-  summarize(
-    casos=n(),
-    salario_q1=wtd.quantile(salario_hora, weights=ponderador_ocup_principal, probs=c(0.25)),
-    salario_promedio=wtd.quantile(salario_hora, weights=ponderador_ocup_principal, probs=0.5),
-    salario_q3=wtd.quantile(salario_hora, weights=ponderador_ocup_principal, probs=c(0.75)),
-    salario_whisker_bajo=wtd.quantile(salario_hora, weights=ponderador_ocup_principal, probs=c(0.02)),
-    salario_whisker_alto=wtd.quantile(salario_hora, weights=ponderador_ocup_principal, probs=c(0.98))
-    ) %>%
-  mutate(aglomerado=fct_reorder(as_factor(aglomerado), salario_promedio))
-
-ggplot(por_aglomerado, aes(aglomerado)) +
-  geom_boxplot(
-   aes(ymin = salario_whisker_bajo, lower = salario_q1, middle = salario_promedio, upper = salario_q3, ymax = salario_whisker_alto),
-   stat = "identity", fill='#ccccff'
-   ) +
-  coord_flip() +
-  xlab('Rango de edad') +
-  ylab('Salario por hora') +
-  labs(fill = "Aglomerado") +
-  scale_y_continuous(labels=scales::dollar_format()) +
-  theme_light()
-
-
-por_aglomerado_total = group_by(empleados, aglomerado) %>%
-  summarize(
-    casos=n(),
-    salario_q1=wtd.quantile(salario, weights=ponderador_ocup_principal, probs=c(0.25)),
-    salario_promedio=wtd.quantile(salario, weights=ponderador_ocup_principal, probs=0.5),
-    salario_q3=wtd.quantile(salario, weights=ponderador_ocup_principal, probs=c(0.75)),
-    salario_whisker_bajo=wtd.quantile(salario, weights=ponderador_ocup_principal, probs=c(0.02)),
-    salario_whisker_alto=wtd.quantile(salario, weights=ponderador_ocup_principal, probs=c(0.98))
-    ) %>%
-  mutate(aglomerado=fct_reorder(as_factor(aglomerado), salario_promedio))
-
-ggplot(por_aglomerado_total, aes(aglomerado)) +
-  geom_boxplot(
-   aes(ymin = salario_whisker_bajo, lower = salario_q1, middle = salario_promedio, upper = salario_q3, ymax = salario_whisker_alto),
-   stat = "identity", fill='#ccccff'
-   ) +
-  coord_flip() +
-  xlab('Rango de edad') +
-  ylab('Salario mensual') +
-  labs(fill = "Aglomerado") +
-  scale_y_continuous(labels=scales::dollar_format()) +
-  theme_light()
-
-inactividad_busca= filter(individual_transf, edad>18 & estado_actividad %in% c('Inactivo') & !is.na(trabajo_busco_12m)) %>%
-  mutate(edad_rango=equal_freq(edad, 5)) %>%
-  group_by(edad_rango, tipo_inactividad, trabajo_busco_12m) %>%
-  count() %>%
-  spread(trabajo_busco_12m, n, fill=0) %>%
-  mutate(p_busco12m=`TRUE`/(`TRUE`+`FALSE`), casos=`FALSE`+`TRUE`) %>%
-  filter(casos>10)
-
-
-ggplot(inactividad_busca, aes(x=tipo_inactividad, y=p_busco12m, fill=edad_rango)) +
-  geom_bar(stat='identity', position='dodge', color='black') +
-  scale_y_continuous(labels = scales::percent) +
-  theme_light() +
-  coord_flip() +
-  scale_fill_brewer(palette="BuPu") +
-  xlab('Tipo de inactividad') +
-  ylab('Porcentaje que busco trabajo en los ultimos 12 meses')
-
-
-inactividad_busca_por_aglomerado= filter(individual_transf, edad>=18 & estado_actividad %in% c('Inactivo') & !is.na(trabajo_busco_12m)) %>%
-  group_by(tipo_inactividad, trabajo_busco_12m, aglomerado) %>%
-  count() %>%
-  spread(trabajo_busco_12m, n, fill=0) %>%
-  mutate(p_busco12m=`TRUE`/(`TRUE`+`FALSE`), casos=`FALSE`+`TRUE`)
-
-  
-for (i in 1:ceiling(length(unique(inactividad_busca_por_aglomerado$aglomerado))/4)){
-g=ggplot(inactividad_busca_por_aglomerado, aes(x=tipo_inactividad, y=p_busco12m, fill=tipo_inactividad)) +
-  geom_bar(stat='identity', position='dodge', color='black') +
-  geom_text(aes(label=paste0("(", `TRUE`, "/", `TRUE`+`FALSE`, ")")), hjust='inward', size=3) +
-  scale_y_continuous(labels = scales::percent) +
-  theme_light() +
-  coord_flip() +
-  scale_fill_brewer(palette="Set2") +
-  xlab('Tipo de inactividad') +
-  ylab('Porcentaje que busco trabajo en los ultimos 12 meses') +
-  labs(fill='Tipo de inactividad') +
-  facet_wrap_paginate(~aglomerado, scales="fixed",nrow=2, ncol=2, page=i) +
-  theme(axis.text.x = element_text(angle = 45, hjust = 1))
-plot(g)
-}
-
+############################################################
+write_delim(individual_transf, "eph_individual.csv", delim = ";")
